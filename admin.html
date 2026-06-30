@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Blog Direitos do Autista TEA</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f4f0fb;color:#2d1a00;min-height:100vh}
+header{background:#2d1547;color:#fff;padding:18px 32px;display:flex;align-items:center;gap:16px}
+header h1{font-size:20px;font-weight:700}
+header span{font-size:13px;color:#e0c8f8;background:rgba(255,255,255,.1);padding:4px 12px;border-radius:20px}
+.tabs{display:flex;gap:0;background:#fff;border-bottom:2px solid #e8ddd0;padding:0 32px}
+.tab{padding:14px 24px;cursor:pointer;font-size:14px;font-weight:600;color:#888;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.2s}
+.tab.active{color:#7B4FA6;border-bottom-color:#7B4FA6}
+.panel{display:none;padding:32px;max-width:960px;margin:0 auto}
+.panel.active{display:block}
+.card{background:#fff;border-radius:14px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card h2{font-size:16px;font-weight:700;color:#2d1547;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #f0e8e0}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:12px;font-weight:700;color:#7a5a3a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:10px 14px;border:1.5px solid #e0d4c8;border-radius:8px;font-size:14px;font-family:inherit;color:#2d1a00;transition:border .2s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#7B4FA6}
+.field textarea{resize:vertical;min-height:100px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.rich-editor{border:1.5px solid #e0d4c8;border-radius:8px;overflow:hidden}
+.rich-toolbar{background:#f4f0fb;padding:8px 12px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid #e0d4c8}
+.rich-toolbar button{background:#fff;border:1px solid #d4c8bc;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;color:#2d1547;transition:.15s}
+.rich-toolbar button:hover{background:#7B4FA6;color:#fff;border-color:#7B4FA6}
+.rich-content{min-height:300px;padding:16px;font-size:14px;line-height:1.8;outline:none}
+.rich-content h2{font-size:18px;font-weight:700;margin:16px 0 8px;color:#2d1547}
+.rich-content ul{padding-left:24px;margin:8px 0}
+.rich-content p{margin:8px 0}
+.img-upload{border:2px dashed #d4c8bc;border-radius:8px;padding:24px;text-align:center;cursor:pointer;transition:.2s;background:#f8f4fc}
+.img-upload:hover{border-color:#7B4FA6;background:#fff8f5}
+.img-upload input{display:none}
+.img-preview{max-width:100%;max-height:200px;border-radius:8px;margin-top:12px;display:none}
+.tag-input{display:flex;flex-wrap:wrap;gap:8px;padding:8px;border:1.5px solid #e0d4c8;border-radius:8px;min-height:42px;align-items:center;cursor:text}
+.tag-input input{border:none;outline:none;font-size:14px;flex:1;min-width:120px;font-family:inherit}
+.tag-chip{background:#7B4FA6;color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:6px}
+.tag-chip button{background:none;border:none;color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0}
+.btn-pub{display:flex;align-items:center;gap:10px;background:#7B4FA6;color:#fff;border:none;border-radius:10px;padding:16px 32px;font-size:15px;font-weight:700;cursor:pointer;width:100%;justify-content:center;transition:.2s;margin-top:8px}
+.btn-pub:hover{background:#5a3480}
+.btn-pub:disabled{background:#ccc;cursor:not-allowed}
+.btn-sec{background:#fff;border:1.5px solid #7B4FA6;color:#7B4FA6;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s}
+.btn-sec:hover{background:#7B4FA6;color:#fff}
+.status{padding:14px 20px;border-radius:10px;font-size:14px;font-weight:600;margin-top:16px;display:none}
+.status.ok{background:#d1fae5;color:#065f46;display:block}
+.status.err{background:#fee2e2;color:#991b1b;display:block}
+.status.load{background:#fef3c7;color:#92400e;display:block}
+.config-note{font-size:12px;color:#888;margin-top:6px;line-height:1.6}
+.emoji-pick{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.emoji-pick button{font-size:20px;background:#f4f0fb;border:1.5px solid #e0d4c8;border-radius:6px;padding:4px 8px;cursor:pointer;transition:.15s}
+.emoji-pick button:hover,.emoji-pick button.sel{background:#7B4FA6;border-color:#7B4FA6}
+.preview-box{background:#fff;border-radius:14px;padding:24px;border:2px solid #e0d4c8}
+.prev-titulo{font-size:22px;font-weight:700;color:#2d1547;margin-bottom:8px}
+.prev-sub{font-size:14px;color:#7a5a3a;margin-bottom:12px}
+.prev-meta{font-size:12px;color:#aaa;display:flex;gap:12px}
+.prev-tags{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.prev-tag{background:#f4f0fb;color:#7B4FA6;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.prev-corpo{font-size:14px;line-height:1.8;color:#444;margin-top:12px;padding-top:12px;border-top:1px solid #f0e8e0}
+.artlist{list-style:none}
+.artlist li{background:#fff;border-radius:10px;padding:16px 20px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.artlist .art-titulo{font-size:14px;font-weight:700;color:#2d1547}
+.artlist .art-data{font-size:12px;color:#aaa}
+.artlist .art-btns{display:flex;gap:8px}
+.artlist .art-btns button{padding:6px 14px;border-radius:6px;border:none;font-size:12px;font-weight:700;cursor:pointer}
+.del-btn{background:#fee2e2;color:#991b1b}
+.edit-btn{background:#f4f0fb;color:#2d1547}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>⚖️ Admin - Blog Direitos do Autista TEA</h1>
+  </div>
+  <span>Dra. Tairiny Rodrigues · OAB/DF 87.023</span>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('novo')">✏️ Novo Artigo</div>
+  <div class="tab" onclick="showTab('artigos')">📋 Artigos</div>
+  <div class="tab" onclick="showTab('config')">⚙️ Configuração GitHub</div>
+</div>
+
+<!-- PAINEL: NOVO ARTIGO -->
+<div id="tab-novo" class="panel active">
+
+  <div class="card">
+    <h2>📝 Dados do Artigo</h2>
+
+    <div class="field">
+      <label>Título *</label>
+      <input type="text" id="f-titulo" placeholder="Ex: Adicional noturno: quem tem direito e como calcular">
+    </div>
+
+    <div class="field">
+      <label>Subtítulo / Chamada</label>
+      <textarea id="f-sub" rows="2" placeholder="Frase de impacto que aparece no card do artigo..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Resumo (aparece no card)</label>
+      <textarea id="f-resumo" rows="3" placeholder="Parágrafo curto de apresentação do artigo..."></textarea>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Ícone do Artigo</label>
+        <input type="text" id="f-icone" placeholder="⚗️" style="font-size:20px">
+        <div class="emoji-pick">
+          <button onclick="setEmoji('⚗️')">⚗️</button>
+          <button onclick="setEmoji('⚖️')">⚖️</button>
+          <button onclick="setEmoji('🔬')">🔬</button>
+          <button onclick="setEmoji('🏗️')">🏗️</button>
+          <button onclick="setEmoji('🌙')">🌙</button>
+          <button onclick="setEmoji('🔥')">🔥</button>
+          <button onclick="setEmoji('💼')">💼</button>
+          <button onclick="setEmoji('📋')">📋</button>
+          <button onclick="setEmoji('🩺')">🩺</button>
+          <button onclick="setEmoji('💰')">💰</button>
+          <button onclick="setEmoji('🏛️')">🏛️</button>
+          <button onclick="setEmoji('📄')">📄</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Data de Publicação</label>
+        <input type="text" id="f-data" placeholder="Jun 2026">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Categoria</label>
+        <select id="f-cat">
+          <option value="direito">Direito Trabalhista</option>
+          <option value="previdenciario">Previdenciário</option>
+          <option value="bancario">Bancário</option>
+          <option value="jurisprudencia">Jurisprudência</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Área (texto exibido)</label>
+        <input type="text" id="f-area" value="Direitos da Pessoa com TEA">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tags (tecle Enter para adicionar)</label>
+      <div class="tag-input" id="tag-input" onclick="document.getElementById('tag-field').focus()">
+        <input type="text" id="tag-field" placeholder="Digite uma tag..." onkeydown="addTag(event)">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🖼️ Imagem de Capa</h2>
+    <div class="img-upload" onclick="document.getElementById('img-file').click()">
+      <div style="font-size:32px;margin-bottom:8px">📷</div>
+      <div style="font-size:14px;color:#888">Clique para escolher uma imagem<br><small>JPG, PNG ou WebP — máx. 5MB</small></div>
+      <input type="file" id="img-file" accept="image/*" onchange="loadImage(this)">
+      <img id="img-preview" class="img-preview">
+    </div>
+    <p style="font-size:12px;color:#aaa;margin-top:8px">A imagem é convertida automaticamente para base64 e embutida no blog.</p>
+  </div>
+
+  <div class="card">
+    <h2>📖 Conteúdo do Artigo</h2>
+    <div class="rich-editor">
+      <div class="rich-toolbar">
+        <button onclick="fmt('bold')"><b>B</b></button>
+        <button onclick="fmt('italic')"><i>I</i></button>
+        <button onclick="insertH2()">H2</button>
+        <button onclick="insertH3()">H3</button>
+        <button onclick="insertUL()">Lista</button>
+        <button onclick="insertLI()">• Item</button>
+        <button onclick="fmt('insertHorizontalRule')">— Linha</button>
+        <button onclick="insertStrong()"><b>Destaque</b></button>
+        <button onclick="clearFormat()">Limpar</button>
+      </div>
+      <div class="rich-content" id="corpo" contenteditable="true"
+           placeholder="Escreva o conteúdo completo do artigo aqui. Use os botões acima para formatar.">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>👁️ Pré-visualização</h2>
+    <div class="preview-box" id="preview-box">
+      <p style="color:#aaa;font-size:13px">Preencha o título para ver a prévia...</p>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:12px">
+      <button class="btn-sec" onclick="updatePreview()">Atualizar Prévia</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🚀 Publicar</h2>
+    <p style="font-size:13px;color:#7a5a3a;margin-bottom:16px">O artigo será inserido no início do blog e publicado automaticamente via GitHub.</p>
+    <button class="btn-pub" id="btn-pub" onclick="publicar()">
+      🚀 Publicar Artigo no Blog
+    </button>
+    <div id="status-pub" class="status"></div>
+  </div>
+
+</div>
+
+<!-- PAINEL: ARTIGOS -->
+<div id="tab-artigos" class="panel">
+  <div class="card">
+    <h2>📋 Artigos Publicados</h2>
+    <p style="font-size:13px;color:#888;margin-bottom:16px">Artigos existentes no blog (carregados do GitHub).</p>
+    <button class="btn-sec" onclick="carregarArtigos()" style="margin-bottom:20px">🔄 Carregar Artigos</button>
+    <ul class="artlist" id="artlist">
+      <li style="color:#aaa;font-size:13px;list-style:none">Clique em "Carregar Artigos" para ver.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- PAINEL: CONFIGURAÇÃO -->
+<div id="tab-config" class="panel">
+  <div class="card" style="border:2px solid #7B4FA6">
+    <h2>🔑 Token GitHub + Proteção por Senha</h2>
+    <div class="field">
+      <label>🔒 Senha Mestra (protege o token com AES-256)</label>
+      <input type="password" id="cfg-senha" placeholder="Sua senha secreta — só você sabe">
+      <p class="config-note">Esta senha <strong>nunca é salva</strong> — só você a conhece. Sem ela, ninguém consegue usar o token mesmo que acesse este computador.</p>
+    </div>
+    <div class="field">
+      <label>Personal Access Token do GitHub</label>
+      <input type="password" id="cfg-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+      <p class="config-note">Gere em: GitHub → Settings → Developer Settings → Personal Access Tokens → Tokens (classic)<br>Permissões necessárias: <strong>repo</strong> (acesso completo ao repositório)</p>
+    </div>
+    <div id="cfg-lock-status" style="font-size:13px;color:#3d8c5a;font-weight:600;margin-top:8px;display:none">🔓 Token carregado e pronto para uso</div>
+  </div>
+
+  <div class="card">
+    <h2>📁 Repositório do Blog Trabalhista</h2>
+    <div class="field-row">
+      <div class="field">
+        <label>Usuário/Organização GitHub</label>
+        <input type="text" id="cfg-owner" placeholder="ex: tairinyrodrigues">
+      </div>
+      <div class="field">
+        <label>Nome do Repositório</label>
+        <input type="text" id="cfg-repo" placeholder="ex: blog-trabalhista">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Branch</label>
+        <input type="text" id="cfg-branch" value="main">
+      </div>
+      <div class="field">
+        <label>Caminho do arquivo no repositório</label>
+        <input type="text" id="cfg-path" placeholder="ex: index.html">
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button class="btn-pub" onclick="salvarConfig()" style="width:auto;padding:12px 28px">💾 Salvar Configuração</button>
+      <button class="btn-sec" onclick="testarConexao()">🔗 Testar Conexão</button>
+    </div>
+    <div id="status-cfg" class="status"></div>
+  </div>
+
+  <div class="card" style="background:#fffbf0;border:1px solid #fde68a">
+    <h2 style="color:#92400e">💡 Como configurar</h2>
+    <ol style="font-size:13px;line-height:2;color:#7a5a3a;padding-left:20px">
+      <li>Crie um repositório no GitHub com o arquivo <strong>index.html</strong> do blog</li>
+      <li>Conecte o repositório ao Netlify (ou Vercel)</li>
+      <li>Gere o Token em GitHub → Settings → Developer Settings → Personal Access Tokens</li>
+      <li>Preencha os campos acima e clique em "Salvar"</li>
+      <li>Volte em "Novo Artigo" e publique — o blog atualiza em ~1 minuto</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+// ─── ESTADO ───────────────────────────────────────────────
+var tags = [];
+var imgBase64 = '';
+var cfg = {};
+
+// ─── INIT ─────────────────────────────────────────────────
+window.onload = function() {
+  carregarCfg();
+  setDataAtual();
+};
+
+function setDataAtual() {
+  var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var d = new Date();
+  document.getElementById('f-data').value = meses[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+// ─── TABS ──────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ─── EMOJI ─────────────────────────────────────────────────
+function setEmoji(e) {
+  document.getElementById('f-icone').value = e;
+  document.querySelectorAll('.emoji-pick button').forEach(function(b){b.classList.remove('sel')});
+  event.target.classList.add('sel');
+}
+
+// ─── TAGS ──────────────────────────────────────────────────
+function addTag(e) {
+  if (e.key !== 'Enter') return;
+  var val = e.target.value.trim();
+  if (!val || tags.includes(val)) { e.target.value = ''; return; }
+  tags.push(val);
+  renderTags();
+  e.target.value = '';
+}
+
+function removeTag(i) {
+  tags.splice(i, 1);
+  renderTags();
+}
+
+function renderTags() {
+  var wrap = document.getElementById('tag-input');
+  var input = document.getElementById('tag-field');
+  wrap.innerHTML = '';
+  tags.forEach(function(t, i) {
+    var chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.innerHTML = t + '<button onclick="removeTag(' + i + ')">×</button>';
+    wrap.appendChild(chip);
+  });
+  wrap.appendChild(input);
+}
+
+// ─── IMAGEM ────────────────────────────────────────────────
+function loadImage(input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  if (file.size > 5 * 1024 * 1024) { alert('Imagem muito grande. Máximo 5MB.'); return; }
+  window._imgFile = file;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    imgBase64 = e.target.result;
+    var prev = document.getElementById('img-preview');
+    prev.src = imgBase64;
+    prev.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function uploadImagemGitHub(file, artId) {
+  if (!file) return null;
+  var ext = file.name.split('.').pop().toLowerCase();
+  var filename = 'imagens/' + artId + '.' + ext;
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = async function(e) {
+      var b64 = e.target.result.split(',')[1];
+      try {
+        var checkR = await fetch(
+          'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + filename,
+          { headers: { Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json' } }
+        );
+        var body = { message: 'Imagem: ' + filename, content: b64, branch: cfg.branch };
+        if (checkR.ok) { var ex = await checkR.json(); body.sha = ex.sha; }
+        var putR = await fetch(
+          'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + filename,
+          { method: 'PUT', headers: { Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+        );
+        if (!putR.ok) { var err = await putR.json(); reject(new Error(err.message)); return; }
+        resolve(filename);
+      } catch(e) { reject(e); }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ─── RICH TEXT ─────────────────────────────────────────────
+function fmt(cmd) {
+  document.getElementById('corpo').focus();
+  document.execCommand(cmd, false, null);
+}
+
+function insertH2() {
+  document.getElementById('corpo').focus();
+  document.execCommand('formatBlock', false, 'h2');
+}
+
+function insertH3() {
+  document.getElementById('corpo').focus();
+  document.execCommand('formatBlock', false, 'h3');
+}
+
+function insertUL() {
+  document.getElementById('corpo').focus();
+  document.execCommand('insertUnorderedList', false, null);
+}
+
+function insertLI() {
+  document.getElementById('corpo').focus();
+  document.execCommand('insertHTML', false, '<li>Novo item</li>');
+}
+
+function insertStrong() {
+  document.getElementById('corpo').focus();
+  document.execCommand('bold', false, null);
+}
+
+function clearFormat() {
+  document.getElementById('corpo').focus();
+  document.execCommand('removeFormat', false, null);
+}
+
+// ─── PREVIEW ───────────────────────────────────────────────
+function updatePreview() {
+  var titulo = document.getElementById('f-titulo').value || '(sem título)';
+  var sub = document.getElementById('f-sub').value || '';
+  var data = document.getElementById('f-data').value || '';
+  var area = document.getElementById('f-area').value || '';
+  var corpo = document.getElementById('corpo').innerHTML || '';
+
+  var tagsHtml = tags.map(function(t){
+    return '<span class="prev-tag">' + t + '</span>';
+  }).join('');
+
+  document.getElementById('preview-box').innerHTML =
+    '<div class="prev-titulo">' + titulo + '</div>' +
+    '<div class="prev-sub">' + sub + '</div>' +
+    '<div class="prev-meta"><span>📅 ' + data + '</span><span>⚖️ ' + area + '</span></div>' +
+    '<div class="prev-tags">' + tagsHtml + '</div>' +
+    '<div class="prev-corpo">' + corpo + '</div>';
+}
+
+// ─── CRYPTO (AES-256-GCM) ──────────────────────────────────
+async function derivarChave(senha, salt) {
+  var enc = new TextEncoder();
+  var keyMaterial = await crypto.subtle.importKey('raw', enc.encode(senha), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: salt, iterations: 200000, hash: 'SHA-256' },
+    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+  );
+}
+
+async function encriptarToken(token, senha) {
+  var salt = crypto.getRandomValues(new Uint8Array(16));
+  var iv   = crypto.getRandomValues(new Uint8Array(12));
+  var key  = await derivarChave(senha, salt);
+  var enc  = new TextEncoder();
+  var ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, enc.encode(token));
+  var buf = new Uint8Array(salt.length + iv.length + ciphertext.byteLength);
+  buf.set(salt, 0); buf.set(iv, 16); buf.set(new Uint8Array(ciphertext), 28);
+  return btoa(String.fromCharCode(...buf));
+}
+
+async function decriptarToken(encriptado, senha) {
+  var buf  = new Uint8Array(atob(encriptado).split('').map(function(c){ return c.charCodeAt(0); }));
+  var salt = buf.slice(0, 16);
+  var iv   = buf.slice(16, 28);
+  var data = buf.slice(28);
+  var key  = await derivarChave(senha, salt);
+  var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, data);
+  return new TextDecoder().decode(plain);
+}
+
+// ─── CONFIG ────────────────────────────────────────────────
+async function salvarConfig() {
+  var token  = document.getElementById('cfg-token').value.trim();
+  var senha  = document.getElementById('cfg-senha').value;
+  var owner  = document.getElementById('cfg-owner').value.trim();
+  var repo   = document.getElementById('cfg-repo').value.trim();
+  var branch = document.getElementById('cfg-branch').value.trim() || 'main';
+  var path   = document.getElementById('cfg-path').value.trim();
+
+  if (!senha) { showStatus('status-cfg','err','❌ Defina uma senha mestra antes de salvar.'); return; }
+  if (!token) { showStatus('status-cfg','err','❌ Insira o Token do GitHub.'); return; }
+
+  showStatus('status-cfg','load','🔄 Criptografando token...');
+  var tokenEnc = await encriptarToken(token, senha);
+
+  var dados = { tokenEnc: tokenEnc, owner: owner, repo: repo, branch: branch, path: path };
+  localStorage.setItem('blog_tea_cfg', JSON.stringify(dados));
+
+  cfg = { token: token, owner: owner, repo: repo, branch: branch, path: path };
+  document.getElementById('cfg-token').value = '';
+  document.getElementById('cfg-senha').value = '';
+  document.getElementById('cfg-lock-status').style.display = 'block';
+  showStatus('status-cfg','ok','✅ Token salvo com criptografia AES-256. Senha NÃO foi armazenada.');
+}
+
+async function carregarCfg() {
+  var saved = localStorage.getItem('blog_tea_cfg');
+  if (!saved) return;
+  var dados = JSON.parse(saved);
+  document.getElementById('cfg-owner').value  = dados.owner  || '';
+  document.getElementById('cfg-repo').value   = dados.repo   || '';
+  document.getElementById('cfg-branch').value = dados.branch || 'main';
+  document.getElementById('cfg-path').value   = dados.path   || '';
+  if (dados.tokenEnc) {
+    document.getElementById('cfg-token').placeholder = '🔒 Token salvo (criptografado) — insira a senha para usar';
+  }
+}
+
+async function desbloquearToken() {
+  var saved = localStorage.getItem('blog_tea_cfg');
+  if (!saved) return null;
+  var dados = JSON.parse(saved);
+  if (!dados.tokenEnc) return null;
+  var senha = document.getElementById('cfg-senha').value ||
+              prompt('🔒 Digite sua senha mestra para desbloquear o painel:');
+  if (!senha) return null;
+  try {
+    var token = await decriptarToken(dados.tokenEnc, senha);
+    cfg = { token: token, owner: dados.owner, repo: dados.repo, branch: dados.branch, path: dados.path };
+    document.getElementById('cfg-lock-status').style.display = 'block';
+    return token;
+  } catch(e) {
+    showStatus('status-pub','err','❌ Senha incorreta ou token corrompido.');
+    return null;
+  }
+}
+
+async function testarConexao() {
+  await salvarConfig();
+  if (!cfg.token || !cfg.owner || !cfg.repo) {
+    showStatus('status-cfg','err','❌ Preencha todos os campos antes de testar.'); return;
+  }
+  showStatus('status-cfg','load','🔄 Testando conexão...');
+  try {
+    var r = await fetch('https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo, {
+      headers: { Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json' }
+    });
+    if (r.ok) {
+      var data = await r.json();
+      showStatus('status-cfg','ok','✅ Conexão OK! Repositório: ' + data.full_name);
+    } else {
+      showStatus('status-cfg','err','❌ Erro ' + r.status + ': verifique token e repositório.');
+    }
+  } catch(e) {
+    showStatus('status-cfg','err','❌ Erro de rede: ' + e.message);
+  }
+}
+
+// ─── PUBLICAR ──────────────────────────────────────────────
+async function publicar() {
+  await carregarCfg();
+  if (!cfg.token) { var tok = await desbloquearToken(); if (!tok) return; }
+
+  var titulo = document.getElementById('f-titulo').value.trim();
+  if (!titulo) { alert('Preencha o título do artigo.'); return; }
+  if (!cfg.token || !cfg.owner || !cfg.repo || !cfg.path) {
+    alert('Configure o GitHub primeiro (aba Configuração).'); return;
+  }
+
+  // Upload imagem como arquivo separado
+  window._imgFilename = null;
+  if (window._imgFile) {
+    showStatus('status-pub', 'load', '🖼️ Fazendo upload da imagem...');
+    try { window._imgFilename = await uploadImagemGitHub(window._imgFile, 'img' + Date.now()); }
+    catch(e) { showStatus('status-pub', 'err', '❌ Erro imagem: ' + e.message); return; }
+  }
+  var btn = document.getElementById('btn-pub');
+  btn.disabled = true;
+  btn.textContent = '⏳ Publicando...';
+  showStatus('status-pub', 'load', '🔄 Buscando arquivo no GitHub...');
+
+  try {
+    // 1. Buscar SHA do commit atual
+    var refR = await fetch(
+      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/git/refs/heads/' + cfg.branch,
+      { headers: { Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json' } }
+    );
+    if (!refR.ok) throw new Error('Erro ao buscar branch: ' + refR.status);
+    var refData = await refR.json();
+    var commitSha = refData.object.sha;
+
+    // 2. Buscar tree SHA do commit
+    var commitR = await fetch(
+      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/git/commits/' + commitSha,
+      { headers: { Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json' } }
+    );
+    var commitData = await commitR.json();
+    var treeSha = commitData.tree.sha;
+
+    // 3. Buscar árvore para encontrar o blob do arquivo
+    showStatus('status-pub', 'load', '🔄 Lendo árvore de arquivos...');
+    var treeR = await fetch(
+      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/git/trees/' + treeSha + '?recursive=1',
+      { headers: { Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json' } }
+    );
+    var treeData = await treeR.json();
+    var fileNode = treeData.tree.find(function(n){ return n.path === cfg.path; });
+    if (!fileNode) throw new Error('Arquivo "' + cfg.path + '" não encontrado no repositório.');
+
+    // 4. Buscar conteúdo atual do arquivo (blob)
+    showStatus('status-pub', 'load', '🔄 Baixando blog (pode demorar ~30s para arquivos grandes)...');
+    var blobR = await fetch(
+      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/git/blobs/' + fileNode.sha,
+      { headers: { Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json' } }
+    );
+    var blobData = await blobR.json();
+    var htmlAtual = decodeBase64(blobData.content);
+
+    // 5. Montar novo artigo
+    showStatus('status-pub', 'load', '🔄 Inserindo artigo...');
+    var novoArtigo = montarArtigo();
+    var htmlNovo = inserirArtigo(htmlAtual, novoArtigo);
+    if (!htmlNovo) throw new Error('Não foi possível encontrar o array ARTIGOS no arquivo.');
+
+    // 6. Criar novo blob
+    showStatus('status-pub', 'load', '🔄 Enviando conteúdo atualizado...');
+    var novoBlobR = await fetch(
+      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/git/blobs',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + cfg.token,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: htmlNovo, encoding: 'utf-8' })
+      }
+    );
+    var novoBlobData = await novoBlobR.json();
+
+    // 7. Criar nova árvore
+    var novaArvoreR = await fetch(
+      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/git/trees',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + cfg.token,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          base_tree: treeSha,
+          tree: [{ path: cfg.path, mode: '100644', type: 'blob', sha: novoBlobData.sha }]
+        })
+      }
+    );
+    var novaArvoreData = await novaArvoreR.json();
+
+    // 8. Criar novo commit
+    var novoCommitR = await fetch(
+      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/git/commits',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + cfg.token,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: '📝 Novo artigo: ' + titulo,
+          tree: novaArvoreData.sha,
+          parents: [commitSha]
+        })
+      }
+    );
+    var novoCommitData = await novoCommitR.json();
+
+    // 9. Atualizar branch
+    await fetch(
+      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/git/refs/heads/' + cfg.branch,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: 'Bearer ' + cfg.token,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sha: novoCommitData.sha })
+      }
+    );
+
+    window._imgFile=null;window._imgFilename=null;imgBase64='';
+    document.getElementById('img-preview').style.display='none';
+    showStatus('status-pub','ok','✅ Artigo publicado! O blog atualiza em ~1 minuto. Commit: '+novoCommitData.sha.substring(0,7));
+    btn.disabled=false;btn.textContent='🚀 Publicar Artigo no Blog';
+
+  } catch(e) {
+    showStatus('status-pub', 'err', '❌ Erro: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = '🚀 Publicar Artigo no Blog';
+  }
+}
+
+// ─── MONTAR ARTIGO ─────────────────────────────────────────
+function montarArtigo() {
+  var titulo = document.getElementById('f-titulo').value.trim();
+  var sub = document.getElementById('f-sub').value.trim();
+  var resumo = document.getElementById('f-resumo').value.trim();
+  var icone = document.getElementById('f-icone').value.trim() || '📄';
+  var data = document.getElementById('f-data').value.trim();
+  var cat = document.getElementById('f-cat').value;
+  var area = document.getElementById('f-area').value.trim();
+  var corpo = document.getElementById('corpo').innerHTML;
+  var img = window._imgFilename || 'imagens/default.png';
+
+  var id = 'a' + Date.now();
+  var tagsArr = JSON.stringify(tags);
+  var hashArr = JSON.stringify(tags.slice(0,4));
+
+  return '{\n    id:"' + id + '",\n    img:"' + img + '",\n    icone:"' + icone + '",\n    cor:"linear-gradient(145deg,#2d1547,#5a3480)",\n    titulo:"' + esc(titulo) + '",\n    subtitulo:"' + esc(sub) + '",\n    area:"' + esc(area) + '",\n    hashtags:' + hashArr + ',\n    cat:"' + cat + '",\n    tags:' + tagsArr + ',\n    tc:["tag-verde","tag-azul"],\n    data:"' + esc(data) + '",\n    resumo:"' + esc(resumo) + '",\n    corpo:`' + corpo + '`\n  }';
+}
+
+function esc(s) {
+  return (s || '').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/`/g,'\\`').replace(/\$/g,'\\$');
+}
+
+// ─── INSERIR NO HTML ────────────────────────────────────────
+function inserirArtigo(html, novoArtigo) {
+  var marker = 'ARTIGOS = [';
+  var idx = html.indexOf(marker);
+  if (idx < 0) return null;
+  var pos = idx + marker.length;
+  return html.substring(0, pos) + '\n  ' + novoArtigo + ',\n' + html.substring(pos);
+}
+
+// ─── CARREGAR ARTIGOS ───────────────────────────────────────
+async function carregarArtigos() {
+  carregarCfg();
+  if (!cfg.token || !cfg.owner || !cfg.repo || !cfg.path) {
+    alert('Configure o GitHub primeiro.'); return;
+  }
+  var list = document.getElementById('artlist');
+  list.innerHTML = '<li style="color:#aaa">🔄 Carregando...</li>';
+  try {
+    var r = await fetch(
+      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.path,
+      { headers: { Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json' } }
+    );
+    if (!r.ok) throw new Error('Erro ' + r.status);
+    var data = await r.json();
+    var html = decodeBase64(data.content);
+    var artigos = extrairTitulos(html);
+    if (!artigos.length) {
+      list.innerHTML = '<li style="color:#aaa">Nenhum artigo encontrado.</li>';
+      return;
+    }
+    list.innerHTML = artigos.map(function(a, i) {
+      return '<li><div><div class="art-titulo">' + a.titulo + '</div><div class="art-data">' + a.data + ' · ' + a.area + '</div></div></li>';
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<li style="color:#c00">❌ ' + e.message + '</li>';
+  }
+}
+
+function extrairTitulos(html) {
+  var re = /titulo:"([^"]{1,200})".{0,500}?area:"([^"]{0,100})".{0,500}?data:"([^"]{0,30})"/g;
+  var result = [];
+  var m;
+  while ((m = re.exec(html)) !== null && result.length < 50) {
+    result.push({ titulo: m[1], area: m[2], data: m[3] });
+  }
+  return result;
+}
+
+// ─── UTILITÁRIOS ───────────────────────────────────────────
+function decodeBase64(b64) {
+  var clean = b64.replace(/\s/g, '');
+  var bytes = atob(clean);
+  var arr = new Uint8Array(bytes.length);
+  for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(arr);
+}
+
+function showStatus(id, type, msg) {
+  var el = document.getElementById(id);
+  el.className = 'status ' + type;
+  el.textContent = msg;
+}
+</script>
+</body>
+</html>

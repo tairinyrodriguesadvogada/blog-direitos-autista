@@ -258,6 +258,174 @@ footer{background:#2a0a50;padding:56px 5% 28px}
 .sobre-foto{width:160px;height:220px;object-fit:cover;object-position:center top;border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.18)}
 .sobre-foto-nome{font-family:var(--serif);font-size:.95rem;font-weight:700;color:var(--dark,#1a1a1a);margin:0}
 .sobre-foto-oab{font-size:.78rem;color:#666;margin:0}
+
+/* ══════════════════════════════════════════════
+   MICROINTERAÇÕES PREMIUM — Tairiny Rodrigues
+   ══════════════════════════════════════════════ */
+
+/* ── MARQUEE STRIP ── */
+.tr-marquee-strip {
+    background: var(--secondary, #0a1628);
+    padding: 11px 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 100;
+}
+.tr-marquee-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: trMarquee 40s linear infinite;
+}
+.tr-marquee-strip:hover .tr-marquee-track {
+    animation-play-state: paused;
+}
+.tr-marquee-item {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    color: rgba(255,255,255,0.82);
+    font-size: 0.73rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0 20px;
+}
+.tr-marquee-sep {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--primary, #e8a020);
+    opacity: 0.8;
+    flex-shrink: 0;
+}
+@keyframes trMarquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tr-marquee-track { animation: none; }
+}
+
+/* ── CUSTOM CURSOR ── */
+.tr-cc-dot {
+    position: fixed;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--primary, #e8a020);
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: width 0.18s ease, height 0.18s ease, opacity 0.18s ease;
+    opacity: 0.9;
+    will-change: left, top;
+}
+.tr-cc-ring {
+    position: fixed;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--primary, #e8a020);
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+    opacity: 0.4;
+    will-change: left, top;
+}
+.tr-cc-ring.tr-hover { width: 46px; height: 46px; opacity: 0.65; }
+.tr-cc-dot.tr-hover  { width: 5px;  height: 5px;  opacity: 1; }
+@media (hover: none), (pointer: coarse) {
+    .tr-cc-dot, .tr-cc-ring { display: none !important; }
+}
+
+/* ── CARROSSEL DE CARDS ── */
+.tr-carousel-wrap {
+    overflow: hidden;
+    position: relative;
+    margin: 0 -8px;
+    cursor: default;
+}
+.tr-carousel-wrap:hover .tr-carousel-track { animation-play-state: paused; }
+.tr-carousel-track {
+    display: flex;
+    gap: 16px;
+    padding: 12px 16px 24px;
+    width: max-content;
+    animation: trCarousel 30s linear infinite;
+    align-items: stretch;
+}
+@keyframes trCarousel {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+.tr-carousel-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    padding: 22px 20px 18px;
+    width: 240px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    border-top: 3px solid transparent;
+    overflow: hidden;
+}
+.tr-carousel-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    border-top-color: var(--primary, #e8a020);
+}
+.tr-carousel-card .tc-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+.tr-carousel-card h4 {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--secondary, #0a1628);
+    line-height: 1.3;
+}
+.tr-carousel-card p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #555;
+    line-height: 1.5;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+.tr-carousel-card:hover p {
+    max-height: 120px;
+    opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+    .tr-carousel-track { animation: none; }
+}
+@media (hover: none) {
+    .tr-carousel-card p { max-height: none; opacity: 1; }
+}
+
+/* ── HOVERS GLOBAIS PREMIUM ── */
+.step { transition: transform 0.2s ease, box-shadow 0.2s ease !important; }
+.step:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.1) !important; }
+.benefit-card, .feature-card { transition: transform 0.2s ease, box-shadow 0.2s ease !important; }
+.benefit-card:hover, .feature-card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.1) !important; }
+.precedent { transition: transform 0.2s ease, box-shadow 0.2s ease !important; }
+.precedent:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.09) !important; }
+.cta-button, .btn-primary, .btn-cta {
+    transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease !important;
+}
+.cta-button:hover, .btn-primary:hover, .btn-cta:hover {
+    transform: translateY(-2px) scale(1.015) !important;
+    filter: brightness(1.07) !important;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.18) !important;
+}
+.faq-item, .faq-question { transition: background 0.18s ease !important; }
 </style>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":
@@ -344,6 +512,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 </section>
+<div class="tr-marquee-strip" aria-hidden="true"><div class="tr-marquee-track"><span class="tr-marquee-item">DIREITOS DO AUTISTA</span><span class="tr-marquee-sep"></span><span class="tr-marquee-item">PLANO DE SAÚDE</span><span class="tr-marquee-sep"></span><span class="tr-marquee-item">ISENÇÕES</span><span class="tr-marquee-sep"></span><span class="tr-marquee-item">BENEFÍCIOS</span><span class="tr-marquee-sep"></span><span class="tr-marquee-item">PROTEÇÃO JURÍDICA</span><span class="tr-marquee-sep"></span><span class="tr-marquee-item">DIREITOS DO AUTISTA</span><span class="tr-marquee-sep"></span><span class="tr-marquee-item">PLANO DE SAÚDE</span><span class="tr-marquee-sep"></span><span class="tr-marquee-item">ISENÇÕES</span><span class="tr-marquee-sep"></span><span class="tr-marquee-item">BENEFÍCIOS</span><span class="tr-marquee-sep"></span><span class="tr-marquee-item">PROTEÇÃO JURÍDICA</span><span class="tr-marquee-sep"></span></div></div>
+
 
 <!-- DESTAQUE -->
 
@@ -374,7 +544,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <li>Respostas a dúvidas frequentes de famílias de autistas</li>
         <li>Orientação sobre como fazer valer os direitos do seu filho</li>
       </ul>
-      <a href="https://t.me/+comunidade_tea" target="_blank" class="btn-tg">
+      <a href="https://t.me/+kOydjsKdZ703MzMx" target="_blank" class="btn-tg">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.016 9.498c-.148.672-.546.836-1.107.52l-3.073-2.265-1.483 1.427c-.163.164-.3.3-.617.3l.22-3.12 5.672-5.125c.248-.22-.053-.34-.382-.12L6.703 14.2l-2.99-.937c-.65-.203-.663-.65.136-.963l11.67-4.5c.542-.196 1.015.13.043.448z"/></svg>
         Entre na Comunidade
       </a>
@@ -497,7 +667,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div>
         <div class="fc-icone"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8a8f0" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 000 20M2 12h20"/></svg></div>
         <div class="fc-titulo">Google</div>
-        <div class="fc-info"><a href="https://share.google/clivi1hYDr2OdzeHv" target="_blank">Google Meu Negócio</a></div>
+        <div class="fc-info"><a href="https://share.google/Kmf9ubxMUirv5mz4E" target="_blank">Google Meu Negócio</a></div>
       </div>
     </div>
         <div style="font-size:11px;color:rgba(255,255,255,0.45);text-align:center;margin:20px 0 12px;line-height:1.7;max-width:700px;margin-left:auto;margin-right:auto">&#x1F512; <strong>Privacidade (LGPD):</strong> Este site n&#xE3;o coleta dados pessoais sem consentimento. As informa&#xE7;&#xF5;es enviadas pelo WhatsApp s&#xE3;o usadas exclusivamente para atendimento jur&#xED;dico, conforme a Lei 13.709/2018 (LGPD).</div>
